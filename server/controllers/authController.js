@@ -5,6 +5,7 @@ import User from "../models/User.js";
 //register controller
 export const register = async (req, res, next) => {
   try {
+    console.log("Received body:", req.body);
     const { name, email, password, role = "user" } = req.body;
 
     // check if user already exists
@@ -18,10 +19,17 @@ export const register = async (req, res, next) => {
     // Generate Token
     const token = result.createJWT();
 
+    // Set token as HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     res.status(201).json({
       success: true,
       message: "User created Successfully",
-      token,
     });
   } catch (error) {
     next(error);
@@ -46,15 +54,17 @@ export const login = async (req, res, next) => {
     //create token
     const token = checkEmail.createJWT();
 
+    // Set token as HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     res.status(200).json({
       success: true,
       message: "Login successfully",
-      user: {
-        _id: checkEmail._id,
-        name: checkEmail.name,
-        email: checkEmail.email,
-      },
-      token,
     });
   } catch (error) {
     next(error);

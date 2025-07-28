@@ -4,12 +4,14 @@ import morgan from "morgan";
 import cors from "cors";
 import passport from "passport";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 
 import dbConnect from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
 import "./config/passport.js";
 import googleAuth from "./routes/googleAuthRoute.js";
+import { cookie } from "express-validator";
 
 //rest object
 const app = express();
@@ -32,10 +34,16 @@ app.use(passport.session());
 dbConnect();
 
 //middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true,
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //routes
 app.use("/api/auth", authRoutes);

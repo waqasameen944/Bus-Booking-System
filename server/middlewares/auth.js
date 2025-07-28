@@ -6,21 +6,32 @@ dotenv.config();
 
 const userAuth = async (req, res, next) => {
   try {
+    let token;
+
+    // Check Authorization header
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+
+    // If not in header, check cookies
+    if (!token && req.cookies?.token) {
+      token = req.cookies.token;
+    }
+
+    // If token still not found
+    if (!token) {
       return next(new ErrorHandler("Not authorized to access this route", 401));
     }
-    //Grab token
-    const token = authHeader.split(" ")[1];
 
-    //verify token
-    const payLoad = JWT.verify(token, process.env.JWT_SECRET);
+    // Verify token
+    const payload = JWT.verify(token, process.env.JWT_SECRET);
 
-    // Attach user ID to request
-    req.user = payLoad;
+    // Attach payload to request
+    req.user = payload;
     next();
   } catch (error) {
-    next(error);
+    return next(new ErrorHandler("Token is invalid or expired", 401));
   }
 };
 
