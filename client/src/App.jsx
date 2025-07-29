@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router"; // Import Routes an
 import AuthForms from "./components/authForm";
 import ProfilePage from "./components/ProfilePage"; // Import the new ProfilePage
 import { Toaster } from "sonner";
+import AdminDashboard from "./components/adminDashboard";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           {/* Define your routes */}
           <Route path="/" element={<AuthForms />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
           {/* You can add more routes here */}
         </Routes>
       </BrowserRouter>

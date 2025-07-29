@@ -17,7 +17,10 @@ router.get(
 // @route   GET /auth/google/callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login", session: false }),
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false,
+  }),
   async (req, res) => {
     try {
       const payload = {
@@ -31,19 +34,19 @@ router.get(
         expiresIn: process.env.JWT_LIFETIME,
       });
 
-      res.status(200).json({
-        success: true,
-        message: "Google login successful",
-        token,
-        user: {
-          _id: req.user._id,
-          name: req.user.name,
-          email: req.user.email,
-          role: req.user.role,
-        },
+      // Set token as HTTP-only cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
+
+      res.redirect(`${process.env.CLIENT_URL}/profile`);
     } catch (error) {
-      res.status(500).json({ success: false, message: "JWT generation failed", error });
+      res
+        .status(500)
+        .json({ success: false, message: "JWT generation failed", error });
     }
   }
 );
