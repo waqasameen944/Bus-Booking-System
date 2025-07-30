@@ -90,7 +90,6 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export const createBooking = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { date, timeSlot, passenger } = req.body;
     const errors = [];
 
@@ -151,10 +150,10 @@ export const createBooking = async (req, res, next) => {
       schedule = new BusSchedule({
         date,
         timeSlot,
-        totalSeats: 15,
+        totalSeats: process.env.TotalSeatsAvailable || 15,
         availableSeats: 15,
         bookedSeats: [],
-        price: 100, // set default price
+        price: process.env.BUS_SEAT_PRICE || 25, // set default price
       });
       await schedule.save();
     }
