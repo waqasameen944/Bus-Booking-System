@@ -1,16 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CreditCard, Shield, MapPin } from "lucide-react";
+import { CreditCard, Shield, MapPin, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const TICKET_PRICE = 25.0;
 
-export function PaymentForm({ bookingData, onPaymentSuccess, onBack }) {
+// Initialize Stripe
+const publishableKey = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
+if (!publishableKey) {
+  console.error("Stripe publishable key is missing");
+}
+const stripePromise = loadStripe(publishableKey);
+
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: "16px",
+      color: "#424770",
+      "::placeholder": {
+        color: "#aab7c4",
+      },
+    },
+    invalid: {
+      color: "#9e2146",
+    },
+  },
+  hidePostalCode: false,
+};
+
+function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
+  const stripe = useStripe();
+  const elements = useElements();
   const [processing, setProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [clientSecret, setClientSecret] = useState(null);
 
   const timeSlotLabels = {
     morning: "Morning (08:00 AM)",
@@ -18,37 +51,145 @@ export function PaymentForm({ bookingData, onPaymentSuccess, onBack }) {
     evening: "Evening (06:00 PM)",
   };
 
-  const handlePayment = async () => {
+  // Create booking + payment intent
+  useEffect(() => {
+    createBookingAndPaymentIntent();
+  }, []);
+
+  const createBookingAndPaymentIntent = async () => {
+    try {
+      // Create booking
+      const bookingResponse = await fetch(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:3000"
+        }/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            date: bookingData.date,
+            timeSlot: bookingData.timeSlot,
+            passenger: {
+              name: bookingData.userName,
+              email: bookingData.userEmail,
+              phone: bookingData.userPhone,
+            },
+          }),
+          credentials: "include",
+        }
+      );
+
+      if (!bookingResponse.ok) {
+        const errorData = await bookingResponse.json();
+        throw new Error(errorData.message || "Failed to create booking");
+      }
+
+      const bookingResult = await bookingResponse.json();
+      toast.success("Booking created successfully");
+
+      // Create payment intent
+      const paymentResponse = await fetch(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:3000"
+        }/api/payments/create-payment-intent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            bookingId: bookingResult.booking.id,
+          }),
+          credentials: "include",
+        }
+      );
+
+      if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json();
+        throw new Error(errorData.message || "Failed to create payment intent");
+      }
+
+      const paymentResult = await paymentResponse.json();
+      setClientSecret(paymentResult.clientSecret);
+    } catch (error) {
+      // console.error("Error creating booking/payment:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to initialize payment"
+      );
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!stripe || !elements || !clientSecret) {
+      toast.error("Payment system not ready. Please try again.");
+      return;
+    }
+
     setProcessing(true);
 
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      toast.error("Card information not found");
+      setProcessing(false);
+      return;
+    }
+
     try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      // Confirm payment with Stripe
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: bookingData.userName,
+              email: bookingData.userEmail,
+              phone: bookingData.userPhone,
+            },
+          },
+        });
 
-      // Generate booking code
-      const bookingCode = `BUS${Date.now().toString().slice(-6)}`;
+      if (stripeError) throw new Error(stripeError.message || "Payment failed");
 
-      // Simulate API call to save booking and send emails
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...bookingData,
-          bookingCode,
-          amount: TICKET_PRICE,
-        }),
-      });
+      if (paymentIntent?.status === "succeeded") {
+        // Confirm payment with backend
+        const confirmResponse = await fetch(
+          `${
+            import.meta.env.VITE_API_URL || "http://localhost:3000"
+          }/api/payments/confirm-payment`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              paymentIntentId: paymentIntent.id,
+            }),
+            credentials: "include",
+          }
+        );
 
-      if (response.ok) {
-        onPaymentSuccess(bookingCode);
+        if (!confirmResponse.ok) {
+          const errorData = await confirmResponse.json();
+          throw new Error(errorData.message || "Failed to confirm payment");
+        }
+
+        const confirmResult = await confirmResponse.json();
+        toast.success("Payment successful!");
+        onPaymentSuccess(confirmResult.booking.bookingCode);
       } else {
-        throw new Error("Booking failed");
+        throw new Error("Payment was not successful");
       }
     } catch (error) {
-      console.error("Payment failed:", error);
-      alert("Payment failed. Please try again.");
+      // console.error("Payment error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Payment failed. Please try again."
+      );
     } finally {
       setProcessing(false);
     }
@@ -132,40 +273,64 @@ export function PaymentForm({ bookingData, onPaymentSuccess, onBack }) {
                 </p>
               </div>
 
-              {/* Mock payment form */}
-              <div className="space-y-4">
+              {/* Stripe Card Element */}
+              {clientSecret ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="p-4 border rounded-lg bg-white">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Card Information
+                    </label>
+                    <CardElement options={cardElementOptions} />
+                  </div>
+
+                  <div className="flex justify-between pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={onBack}
+                      disabled={processing}
+                    >
+                      Back to Details
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={!stripe || processing || !clientSecret}
+                      className="min-w-[120px]"
+                    >
+                      {processing ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Processing...
+                        </div>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Pay ${(TICKET_PRICE + 2).toFixed(2)}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              ) : (
                 <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                  <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600 mb-2">Stripe Payment Form</p>
-                  <p className="text-sm text-gray-500">
-                    In production, this would be the actual Stripe Elements form
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p className="text-gray-600">
+                    Initializing secure payment...
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={onBack} disabled={processing}>
-                Back to Details
-              </Button>
-              <Button
-                onClick={handlePayment}
-                disabled={processing}
-                className="min-w-[120px]"
-              >
-                {processing ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  `Pay $${(TICKET_PRICE + 2).toFixed(2)}`
-                )}
-              </Button>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+}
+
+export function PaymentForm(props) {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm {...props} />
+    </Elements>
   );
 }

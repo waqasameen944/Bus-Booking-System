@@ -13,7 +13,13 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
   const handleDateSelect = (selectedDate) => {
     if (selectedDate) {
       setDate(selectedDate);
-      onDateSelect(selectedDate.toISOString().split("T")[0]);
+
+      // Store the date exactly as selected (no timezone conversion)
+      const formattedDate = `${selectedDate.getFullYear()}-${String(
+        selectedDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+
+      onDateSelect(formattedDate);
     }
   };
 
@@ -45,7 +51,12 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
           <p className="text-lg mb-4">
             Selected Date:{" "}
             <span className="font-semibold">
-              {new Date(selectedDate).toLocaleDateString()}
+              {new Date(selectedDate).toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </span>
           </p>
           <Button onClick={onNext} size="lg">

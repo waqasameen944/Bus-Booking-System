@@ -17,36 +17,36 @@ export function TimeSlotSelection({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call to get available seats for each time slot
     const fetchAvailableSeats = async () => {
       setLoading(true);
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        // Call your backend API with the selected date
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/bookings/availability/${selectedDate}`
+        );
+        const data = await res.json();
 
-      // Mock data - in real app, this would come from your backend
-      const mockTimeSlots = [
-        {
-          id: "morning",
-          label: "Morning",
-          time: "08:00 AM",
-          availableSeats: Math.floor(Math.random() * 15) + 1,
-        },
-        {
-          id: "noon",
-          label: "Noon",
-          time: "12:00 PM",
-          availableSeats: Math.floor(Math.random() * 15) + 1,
-        },
-        {
-          id: "evening",
-          label: "Evening",
-          time: "06:00 PM",
-          availableSeats: Math.floor(Math.random() * 15) + 1,
-        },
-      ];
-
-      setTimeSlots(mockTimeSlots);
-      setLoading(false);
+        if (data.success) {
+          // Map API response to match your timeSlots state
+          const updatedTimeSlots = data.availability.map((slot) => ({
+            id: slot.timeSlot,
+            label: slot.label,
+            time: slot.time,
+            availableSeats: slot.availableSeats,
+          }));
+          setTimeSlots(updatedTimeSlots);
+        } else {
+          setTimeSlots([]);
+          console.error(data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching available seats:", error);
+        setTimeSlots([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (selectedDate) {
@@ -97,7 +97,7 @@ export function TimeSlotSelection({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-blue-600 mb-2">
+              <p className="text-2xl font-semibold text-blue-600 mb-2">
                 {slot.time}
               </p>
               <div className="flex items-center gap-2">

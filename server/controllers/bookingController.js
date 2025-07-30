@@ -75,11 +75,11 @@ export const getAvailability = async (req, res, next) => {
 const getTimeSlotTime = (timeSlot) => {
   switch (timeSlot) {
     case "morning":
-      return "09:00 AM - 12:00 PM";
+      return "09:00 AM";
     case "noon":
-      return "12:00 PM - 03:00 PM";
+      return "12:00 PM";
     case "evening":
-      return "03:00 PM - 06:00 PM";
+      return "03:00 PM";
     default:
       return "";
   }
@@ -87,10 +87,10 @@ const getTimeSlotTime = (timeSlot) => {
 
 // Helper functions
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isValidPhone = (phone) => /^[0-9]{10,15}$/.test(phone);
 
 export const createBooking = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { date, timeSlot, passenger } = req.body;
     const errors = [];
 
@@ -124,12 +124,6 @@ export const createBooking = async (req, res, next) => {
         errors.push({
           field: "passenger.email",
           message: "Valid email is required",
-        });
-      }
-      if (!passenger.phone || !isValidPhone(passenger.phone)) {
-        errors.push({
-          field: "passenger.phone",
-          message: "Valid phone number is required",
         });
       }
     }

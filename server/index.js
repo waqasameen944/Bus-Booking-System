@@ -14,6 +14,7 @@ import googleAuth from "./routes/googleAuthRoute.js";
 import { cookie } from "express-validator";
 import adminRoutes from "./routes/admin.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import paymentRoutes from "./routes/payment.js";
 
 //rest object
 const app = express();
@@ -52,6 +53,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/v1/auth", googleAuth);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments", paymentRoutes);
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
