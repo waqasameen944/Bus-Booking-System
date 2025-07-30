@@ -3,17 +3,17 @@ import dotenv from "dotenv";
 import Booking from "../models/Booking.js";
 import BusSchedule from "../models/BusSchedule.js";
 import ErrorHandler from "../utils/errorHandler.js";
+import { param } from "express-validator";
 
 dotenv.config();
 
 //router object
 const router = express.Router();
 
-
 // Get available time slots for a specific date
 export const getAvailability = async (req, res, next) => {
   try {
-    const { date } = req.body;
+    const { date } = req.params;
     const requestedDate = new Date(date);
 
     // Validate date
@@ -233,7 +233,7 @@ export const getBooking = async (req, res, next) => {
   try {
     const { bookingCode } = req.params;
 
-    const booking = await Booking.findOne({ bookingCode }).toUpperCase();
+    const booking = await Booking.findOne({ bookingCode });
 
     if (!booking) {
       return next(new ErrorHandler("Booking not found", 404));
