@@ -281,7 +281,8 @@ export const updateBookingStatus = async (req, res, next) => {
 // Get schedule overview
 export const getScheduleOverview = async (req, res, next) => {
   try {
-    const { date } = req.body;
+    const date = req.query.date;
+    console.log(date);
 
     const filter = {};
 

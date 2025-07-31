@@ -6,8 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardStats } from "@/components/admin/dashboard-stats";
 import { BookingsTable } from "@/components/admin/bookings-table";
 import { ScheduleOverview } from "@/components/admin/schedule-overview";
-import { RevenueChart } from "@/components/admin/revenue-chart";
-import { RecentActivity } from "@/components/admin/recent-activity";
+
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Download, Settings } from "lucide-react";
 
@@ -71,20 +70,11 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <DashboardStats />
 
-        <Tabs defaultValue="overview" className="mt-8">
+        <Tabs defaultValue="bookings" className="mt-8">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="overview" className="mt-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <RevenueChart />
-              <RecentActivity />
-            </div>
-          </TabsContent>
 
           <TabsContent value="bookings" className="mt-6">
             <BookingsTable />
@@ -92,21 +82,6 @@ export default function AdminDashboard() {
 
           <TabsContent value="schedule" className="mt-6">
             <ScheduleOverview />
-          </TabsContent>
-
-          <TabsContent value="analytics" className="mt-6">
-            <div className="grid gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Analytics Dashboard</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Detailed analytics coming soon...
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
           </TabsContent>
         </Tabs>
       </div>

@@ -139,7 +139,7 @@ export default function AuthForms() {
           description: "Welcome back!",
         });
         console.log("Login successful:", data);
-        navigate("/profile");
+        navigate("/");
       } else {
         toast.error(data.message || "Invalid credentials. Please try again.", {
           description: "Login Failed",

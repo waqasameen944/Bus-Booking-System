@@ -29,7 +29,7 @@ const validateBooking = [
 ];
 
 // Routes
-router.get("/availability/:date", getAvailability);
+router.get("/availability/:date",   getAvailability);
 router.post("/", validateBooking, createBooking);
 router.get("/:bookingCode", getBooking);
 router.delete("/:bookingCode", cancelBooking);

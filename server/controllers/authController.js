@@ -71,6 +71,24 @@ export const login = async (req, res, next) => {
   }
 };
 
+export const logout = async (req, res, next) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0), // Expire immediately
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 //get user profile
 export const getUserProfile = async (req, res, next) => {
   try {

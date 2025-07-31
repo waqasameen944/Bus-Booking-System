@@ -26,7 +26,6 @@ const userAuth = async (req, res, next) => {
 
     // Verify token
     const payload = JWT.verify(token, process.env.JWT_SECRET);
-
     // Attach payload to request
     req.user = payload;
     next();

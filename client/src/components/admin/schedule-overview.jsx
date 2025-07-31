@@ -16,17 +16,28 @@ export function ScheduleOverview() {
   useEffect(() => {
     fetchSchedules();
   }, [selectedDate]);
+  const formatDateToLocal = (date) => {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0"); // months are 0-indexed
+    const day = `${date.getDate()}`.padStart(2, "0");
+
+    return `${year}-${month}-${day}`; // "YYYY-MM-DD"
+  };
 
   const fetchSchedules = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/schedule", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const formattedDate = formatDateToLocal(selectedDate);
+      const response = await fetch(
+        `/api/admin/schedule/?date=${formattedDate}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         console.error("Response not OK:", response.status);
@@ -35,142 +46,10 @@ export function ScheduleOverview() {
       }
 
       const data = await response.json();
+      setSchedules(data.schedules);
       console.log(data);
 
-      const mockSchedules = [
-        {
-          _id: "1",
-          date: selectedDate.toISOString().split("T")[0],
-          timeSlot: "morning",
-          totalSeats: 15,
-          availableSeats: 8,
-          bookedSeats: [
-            {
-              seatNumber: 1,
-              bookingId: "book1",
-              passenger: { name: "John Doe", email: "john@example.com" },
-            },
-            {
-              seatNumber: 3,
-              bookingId: "book2",
-              passenger: { name: "Jane Smith", email: "jane@example.com" },
-            },
-            {
-              seatNumber: 5,
-              bookingId: "book3",
-              passenger: { name: "Mike Johnson", email: "mike@example.com" },
-            },
-            {
-              seatNumber: 7,
-              bookingId: "book4",
-              passenger: { name: "Sarah Wilson", email: "sarah@example.com" },
-            },
-            {
-              seatNumber: 9,
-              bookingId: "book5",
-              passenger: { name: "Tom Brown", email: "tom@example.com" },
-            },
-            {
-              seatNumber: 11,
-              bookingId: "book6",
-              passenger: { name: "Lisa Davis", email: "lisa@example.com" },
-            },
-            {
-              seatNumber: 13,
-              bookingId: "book7",
-              passenger: { name: "Chris Lee", email: "chris@example.com" },
-            },
-          ],
-          price: 25.0,
-          status: "active",
-        },
-        {
-          _id: "2",
-          date: selectedDate.toISOString().split("T")[0],
-          timeSlot: "noon",
-          totalSeats: 15,
-          availableSeats: 3,
-          bookedSeats: [
-            {
-              seatNumber: 1,
-              bookingId: "book8",
-              passenger: { name: "Alex Johnson", email: "alex@example.com" },
-            },
-            {
-              seatNumber: 2,
-              bookingId: "book9",
-              passenger: { name: "Emma Wilson", email: "emma@example.com" },
-            },
-            {
-              seatNumber: 4,
-              bookingId: "book10",
-              passenger: { name: "David Brown", email: "david@example.com" },
-            },
-            {
-              seatNumber: 6,
-              bookingId: "book11",
-              passenger: { name: "Sophie Davis", email: "sophie@example.com" },
-            },
-            {
-              seatNumber: 8,
-              bookingId: "book12",
-              passenger: { name: "Ryan Lee", email: "ryan@example.com" },
-            },
-            {
-              seatNumber: 10,
-              bookingId: "book13",
-              passenger: { name: "Mia Taylor", email: "mia@example.com" },
-            },
-            {
-              seatNumber: 12,
-              bookingId: "book14",
-              passenger: { name: "Jake Wilson", email: "jake@example.com" },
-            },
-            {
-              seatNumber: 14,
-              bookingId: "book15",
-              passenger: { name: "Olivia Moore", email: "olivia@example.com" },
-            },
-            {
-              seatNumber: 15,
-              bookingId: "book16",
-              passenger: { name: "Ethan Clark", email: "ethan@example.com" },
-            },
-            {
-              seatNumber: 3,
-              bookingId: "book17",
-              passenger: { name: "Ava Martinez", email: "ava@example.com" },
-            },
-            {
-              seatNumber: 5,
-              bookingId: "book18",
-              passenger: { name: "Noah Garcia", email: "noah@example.com" },
-            },
-            {
-              seatNumber: 7,
-              bookingId: "book19",
-              passenger: {
-                name: "Isabella Rodriguez",
-                email: "isabella@example.com",
-              },
-            },
-          ],
-          price: 25.0,
-          status: "active",
-        },
-        {
-          _id: "3",
-          date: selectedDate.toISOString().split("T")[0],
-          timeSlot: "evening",
-          totalSeats: 15,
-          availableSeats: 15,
-          bookedSeats: [],
-          price: 25.0,
-          status: "active",
-        },
-      ];
-
-      setSchedules(mockSchedules);
+      
     } catch (error) {
       console.error("Failed to fetch schedules:", error);
     } finally {
