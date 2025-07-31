@@ -14,13 +14,16 @@ import { Separator } from "@/components/ui/separator";
 import { CreditCard, Shield, MapPin, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const TICKET_PRICE = 25.0;
+const BUS_SEAT_PRICE = parseInt(import.meta.env.VITE_BUS_SEAT_PRICE || 25);
+
+const SERVICE_FEE = parseInt(import.meta.env.VITE_SERVICE_FEE || 0);
 
 // Initialize Stripe
 const publishableKey = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
 if (!publishableKey) {
   console.error("Stripe publishable key is missing");
 }
+
 const stripePromise = loadStripe(publishableKey);
 
 const cardElementOptions = {
@@ -235,16 +238,18 @@ function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Ticket Price:</span>
-                <span className="font-medium">${TICKET_PRICE.toFixed(2)}</span>
+                <span className="font-medium">
+                  ${BUS_SEAT_PRICE.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Service Fee:</span>
-                <span className="font-medium">$2.00</span>
+                <span className="font-medium">${SERVICE_FEE.toFixed(2)}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total:</span>
-                <span>${(TICKET_PRICE + 2).toFixed(2)}</span>
+                <span>${(BUS_SEAT_PRICE + SERVICE_FEE).toFixed(2)}</span>
               </div>
             </div>
           </CardContent>
@@ -305,7 +310,7 @@ function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
                       ) : (
                         <>
                           <CheckCircle className="h-4 w-4 mr-2" />
-                          Pay ${(TICKET_PRICE + 2).toFixed(2)}
+                          Pay ${(BUS_SEAT_PRICE + 2).toFixed(2)}
                         </>
                       )}
                     </Button>

@@ -198,9 +198,9 @@
 }
 
 /* Smooth transitions */
-* {
+/* * {
   transition: all 0.2s ease-in-out;
-}
+} */
 
 /* Loading animation */
 @keyframes spin {
@@ -208,7 +208,6 @@
     transform: rotate(360deg);
   }
 }
-
 .animate-spin {
   animation: spin 1s linear infinite;
 }

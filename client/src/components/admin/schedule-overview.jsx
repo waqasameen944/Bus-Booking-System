@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Clock, Users, MapPin, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 export function ScheduleOverview() {
   const [schedules, setSchedules] = useState([]);
@@ -19,7 +20,22 @@ export function ScheduleOverview() {
   const fetchSchedules = async () => {
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const response = await fetch("/api/admin/schedule", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error("Response not OK:", response.status);
+        toast.error("Failed to fetch Schedules.");
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
 
       const mockSchedules = [
         {

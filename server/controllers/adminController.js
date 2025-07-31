@@ -161,20 +161,20 @@ export const getDashboardStats = async (req, res, next) => {
 export const getBookings = async (req, res, next) => {
   try {
     const page = Number.parseInt(req.query.page) || 1;
-    const limit = Number.parseInt(req.query.limit) || 10;
+    const limit = Number.parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
     const filter = {};
 
-    if (req.query.data) {
-      const date = new Date(req.query.date);
-      const nextDay = new Date(date);
-      nextDay.setDate(date.getDate() + 1);
-      filter.date = { $gte: date, $lt: nextDay };
-    }
-
-    if (req.query.timeSlot) {
-      filter.timeSlot = req.query.timeSlot;
+    // 🔍 Add search filter
+    if (req.query.search) {
+      const searchRegex = new RegExp(req.query.search, "i");
+      filter.$or = [
+        { bookingCode: searchRegex },
+        { "passenger.name": searchRegex },
+        { "passenger.email": searchRegex },
+        { "passenger.phone": searchRegex },
+      ];
     }
 
     if (req.query.status) {
@@ -185,15 +185,23 @@ export const getBookings = async (req, res, next) => {
       filter.paymentStatus = req.query.paymentStatus;
     }
 
-    //Get Booking
+    if (req.query.date) {
+      const date = new Date(req.query.date);
+      const nextDay = new Date(date);
+      nextDay.setDate(date.getDate() + 1);
+      filter.date = { $gte: date, $lt: nextDay };
+    }
+
+    if (req.query.timeSlot) {
+      filter.timeSlot = req.query.timeSlot;
+    }
+
     const bookings = await Booking.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    //Get total count
     const totalCount = await Booking.countDocuments(filter);
-    const totalBookings = await Booking.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / limit);
 
     res.json({
@@ -202,7 +210,7 @@ export const getBookings = async (req, res, next) => {
       pagination: {
         currentPage: page,
         totalPages,
-        totalBookings,
+        totalBookings: totalCount,
         hasNext: page < totalPages,
         hasPrev: page > 1,
       },

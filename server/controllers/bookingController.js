@@ -3,14 +3,39 @@ import dotenv from "dotenv";
 import Booking from "../models/Booking.js";
 import BusSchedule from "../models/BusSchedule.js";
 import ErrorHandler from "../utils/errorHandler.js";
-import { param } from "express-validator";
 
 dotenv.config();
 
-//router object
 const router = express.Router();
 
-// Get available time slots for a specific date
+// Config values from .env
+const BASE_PRICE = parseFloat(process.env.BUS_SEAT_PRICE || 25);;
+if (!BASE_PRICE) console.log("Please set BASE_PRICE in .env");
+const SERVICE_FEE = parseFloat(process.env.SERVICE_FEE || 2);
+if (!SERVICE_FEE) console.log("Please set SERVICE_FEE in .env");
+const TOTAL_SEATS = parseInt(process.env.TOTAL_SEATS_AVAILABLE || 15);
+if (!TOTAL_SEATS) console.log("Please set TOTAL_SEATS in .env");
+
+// Helper: validate email
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+// Helper: time slot labels
+const getTimeSlotTime = (timeSlot) => {
+  switch (timeSlot) {
+    case "morning":
+      return "09:00 AM";
+    case "noon":
+      return "12:00 PM";
+    case "evening":
+      return "03:00 PM";
+    default:
+      return "";
+  }
+};
+
+/**
+ * Get available time slots for a date
+ */
 export const getAvailability = async (req, res, next) => {
   try {
     const { date } = req.params;
@@ -43,10 +68,10 @@ export const getAvailability = async (req, res, next) => {
         schedule = new BusSchedule({
           date,
           timeSlot,
-          totalSeats: 15,
-          availableSeats: 15,
+          totalSeats: TOTAL_SEATS,
+          availableSeats: TOTAL_SEATS,
           bookedSeats: [],
-          price: 100, // Default price if required
+          price: BASE_PRICE,
         });
         await schedule.save();
       }
@@ -71,42 +96,24 @@ export const getAvailability = async (req, res, next) => {
   }
 };
 
-// Helper function
-const getTimeSlotTime = (timeSlot) => {
-  switch (timeSlot) {
-    case "morning":
-      return "09:00 AM";
-    case "noon":
-      return "12:00 PM";
-    case "evening":
-      return "03:00 PM";
-    default:
-      return "";
-  }
-};
-
-// Helper functions
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
+/**
+ * Create booking
+ */
 export const createBooking = async (req, res, next) => {
   try {
     const { date, timeSlot, passenger } = req.body;
     const errors = [];
 
-    // Validate date
+    // Validation
     if (!date) {
       errors.push({ field: "date", message: "Date is required" });
     }
-
-    // Validate time slot
     if (!timeSlot || !["morning", "noon", "evening"].includes(timeSlot)) {
       errors.push({
         field: "timeSlot",
         message: "Valid time slot is required",
       });
     }
-
-    // Validate passenger
     if (!passenger) {
       errors.push({
         field: "passenger",
@@ -127,7 +134,6 @@ export const createBooking = async (req, res, next) => {
       }
     }
 
-    // Return validation errors
     if (errors.length > 0) {
       return res.status(400).json({
         success: false,
@@ -136,7 +142,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // Check past date
     const bookingDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -144,18 +149,21 @@ export const createBooking = async (req, res, next) => {
       return next(new ErrorHandler("Cannot select past dates", 400));
     }
 
-    // Find or create bus schedule
+    // Find or create schedule
     let schedule = await BusSchedule.findOne({ date, timeSlot });
     if (!schedule) {
       schedule = new BusSchedule({
         date,
         timeSlot,
-        totalSeats: process.env.TotalSeatsAvailable || 15,
-        availableSeats: 15,
+        totalSeats: TOTAL_SEATS,
+        availableSeats: TOTAL_SEATS,
         bookedSeats: [],
-        price: process.env.BUS_SEAT_PRICE || 25, // set default price
+        price: BASE_PRICE,
       });
+      // console.log(schedule);
       await schedule.save();
+    } else {
+      console.log("Existing schedule price:", schedule.price);
     }
 
     // Check availability
@@ -171,38 +179,45 @@ export const createBooking = async (req, res, next) => {
     const random = Math.random().toString(36).substr(2, 3).toUpperCase();
     const bookingCode = `BUS${timestamp}${random}`;
 
-    // Find available seat
+    // Assign seat
     const bookedSeatNumbers = schedule.bookedSeats.map(
       (seat) => seat.seatNumber
     );
     let seatNumber = 1;
-    while (bookedSeatNumbers.includes(seatNumber) && seatNumber <= 15) {
+    while (
+      bookedSeatNumbers.includes(seatNumber) &&
+      seatNumber <= TOTAL_SEATS
+    ) {
       seatNumber++;
     }
 
-    if (seatNumber > 15) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No seats available" });
+    if (seatNumber > TOTAL_SEATS) {
+      return res.status(400).json({
+        success: false,
+        message: "No seats available",
+      });
     }
 
-    // Create booking
+    // Final price = schedule price + service fee
+    const finalAmount = schedule.price + SERVICE_FEE;
+
+    // Save booking
+    // *******************************************************************************************************
+    // *******************************************************************************************************
     const booking = new Booking({
       bookingCode,
       date,
       timeSlot,
       passenger,
       seatNumber,
-      amount: schedule.price + 2, // Add service fee
+      amount: finalAmount,
       paymentStatus: "pending",
     });
-
     await booking.save();
 
-    // Update schedule with booked seat
+    // Reserve seat
     await schedule.bookSeat(seatNumber, booking._id);
 
-    // Send response
     return res.status(200).json({
       success: true,
       message: "Booking created successfully",
@@ -221,16 +236,18 @@ export const createBooking = async (req, res, next) => {
   }
 };
 
-// Get booking by booking code
+/**
+ * Get booking by booking code
+ */
 export const getBooking = async (req, res, next) => {
   try {
     const { bookingCode } = req.params;
-
     const booking = await Booking.findOne({ bookingCode });
 
     if (!booking) {
       return next(new ErrorHandler("Booking not found", 404));
     }
+
     res.status(200).json({
       success: true,
       booking: {
@@ -251,23 +268,22 @@ export const getBooking = async (req, res, next) => {
   }
 };
 
-// Cancel booking
+/**
+ * Cancel booking
+ */
 export const cancelBooking = async (req, res, next) => {
   try {
     const { bookingCode } = req.params;
 
-    // Validate booking code
     if (!bookingCode || bookingCode.trim().length < 5) {
       return next(new ErrorHandler("Invalid booking code", 400));
     }
 
-    // Find booking
     const booking = await Booking.findOne({ bookingCode });
     if (!booking) {
       return next(new ErrorHandler("Booking not found", 404));
     }
 
-    // Check status
     if (booking.status === "cancelled") {
       return res.status(400).json({
         success: false,
@@ -275,7 +291,7 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // Check cancellation window (24 hours before)
+    // Check cancellation window (24 hrs)
     if (
       typeof booking.canBeCancelled === "function" &&
       !booking.canBeCancelled()
@@ -286,11 +302,9 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // Cancel booking
     booking.status = "cancelled";
     await booking.save();
 
-    // Release seat in schedule
     const schedule = await BusSchedule.findOne({
       date: booking.date,
       timeSlot: booking.timeSlot,
@@ -300,7 +314,6 @@ export const cancelBooking = async (req, res, next) => {
       await schedule.releaseSeat(booking.seatNumber);
     }
 
-    // Send response
     res.status(200).json({
       success: true,
       message: "Booking cancelled successfully",
