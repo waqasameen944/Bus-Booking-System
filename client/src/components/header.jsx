@@ -5,6 +5,7 @@ import {
   LogOut,
   UserIcon,
   UserCircle,
+  Bus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -90,10 +91,10 @@ export default function ModernHeader() {
     <header className="flex items-center justify-center sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex justify-between gap-10 h-16 items-center px-4 md:px-6">
         <div className="w-[30%]">
-          <a href="#" className="mr-6 flex items-center space-x-2">
-            <Mountain className="h-6 w-6" />
-            <span className="font-bold">Acme Inc</span>
-          </a>
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <Bus className="h-6 w-6" />
+            <span className="font-bold">Transporation Authority LLC</span>
+          </Link>
         </div>
 
         <div className="w-[70%] flex justify-end gap-6">

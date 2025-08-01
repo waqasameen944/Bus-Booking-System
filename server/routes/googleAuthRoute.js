@@ -42,7 +42,7 @@ router.get(
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
-      res.redirect(`${process.env.CLIENT_URL}/profile`);
+      res.redirect(`${process.env.CLIENT_URL}/`);
     } catch (error) {
       res
         .status(500)

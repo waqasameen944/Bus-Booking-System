@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Progress } from "@/components/ui/progress";
 import { DateSelection } from "@/components/booking/date-selection";
 import { TimeSlotSelection } from "@/components/booking/time-slot-selection";
 import { UserDetailsForm } from "@/components/booking/user-details-form";
@@ -67,75 +66,35 @@ export default function BookingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-purple-50 font-sans">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              🚌 Express Bus Booking
-            </h1>
-            <p className="text-gray-600">
-              Book your comfortable journey with us
-            </p>
-          </div>
 
-          {/* Progress Bar */}
-          <div className="mt-8">
-            <div className="flex justify-between items-center mb-2">
-              {steps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`flex items-center ${
-                    index < steps.length - 1 ? "flex-1" : ""
-                  }`}
-                >
-                  <div
-                    className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
-                      currentStepIndex >= index
-                        ? "bg-blue-600 text-white"
-                        : step.completed
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {step.completed && currentStepIndex > index
-                      ? "✓"
-                      : index + 1}
-                  </div>
-                  <span
-                    className={`ml-2 text-sm font-medium ${
-                      currentStepIndex >= index
-                        ? "text-blue-600"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {step.label}
-                  </span>
-                  {index < steps.length - 1 && (
-                    <div className="flex-1 h-0.5 bg-gray-200 mx-4">
-                      <div
-                        className={`h-full transition-all duration-300 ${
-                          currentStepIndex > index
-                            ? "bg-blue-600"
-                            : "bg-gray-200"
-                        }`}
-                        style={{
-                          width: currentStepIndex > index ? "100%" : "0%",
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 pt-24 text-center">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
+          🚌 Express Bus Booking
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Book your comfortable journey with us
+        </p>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-4 py-10   rounded-xl mt-8">
+        {/* Step Header + Progress */}
+        <div className="text-center mb-8">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Step {currentStepIndex + 1} of {steps.length}:{" "}
+            {steps[currentStepIndex].label}
+          </h2>
+          <div className="mt-3 h-3 w-full bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-black transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Booking Steps */}
         {currentStep === "date" && (
           <DateSelection
             selectedDate={bookingData.date}
@@ -143,7 +102,6 @@ export default function BookingPage() {
             onNext={() => setCurrentStep("time")}
           />
         )}
-
         {currentStep === "time" && (
           <TimeSlotSelection
             selectedDate={bookingData.date}
@@ -153,7 +111,6 @@ export default function BookingPage() {
             onBack={() => setCurrentStep("date")}
           />
         )}
-
         {currentStep === "details" && (
           <UserDetailsForm
             userEmail={bookingData.userEmail}
@@ -163,7 +120,6 @@ export default function BookingPage() {
             onBack={() => setCurrentStep("time")}
           />
         )}
-
         {currentStep === "payment" && (
           <PaymentForm
             bookingData={bookingData}
@@ -171,39 +127,36 @@ export default function BookingPage() {
             onBack={() => setCurrentStep("details")}
           />
         )}
-
         {currentStep === "confirmation" && (
           <BookingConfirmation
             bookingData={bookingData}
             onNewBooking={handleNewBooking}
           />
         )}
-      </div>
+      </main>
 
       {/* Footer */}
       <footer className="bg-white border-t mt-16">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="text-center text-gray-600">
-            <p className="mb-2">
-              🚌 Express Bus Service - Your Comfort, Our Priority
-            </p>
-            <p className="text-sm">
-              Need help? Contact us at{" "}
-              <a
-                href="mailto:support@expressbus.com"
-                className="text-blue-600 hover:underline"
-              >
-                support@expressbus.com
-              </a>{" "}
-              or call{" "}
-              <a
-                href="tel:+15551234567"
-                className="text-blue-600 hover:underline"
-              >
-                +1 (555) 123-4567
-              </a>
-            </p>
-          </div>
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-gray-600">
+          <p className="mb-2">
+            🚌 Express Bus Service - Your Comfort, Our Priority
+          </p>
+          <p className="text-sm">
+            Need help? Contact us at{" "}
+            <a
+              href="mailto:support@expressbus.com"
+              className="text-blue-600 hover:underline"
+            >
+              support@expressbus.com
+            </a>{" "}
+            or call{" "}
+            <a
+              href="tel:+15551234567"
+              className="text-blue-600 hover:underline"
+            >
+              +1 (555) 123-4567
+            </a>
+          </p>
         </div>
       </footer>
     </div>

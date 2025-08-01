@@ -88,7 +88,7 @@ const ProfilePage = () => {
 
       if (response.ok) {
         toast.success(data.message);
-        navigate("/profile");
+        navigate("/");
       }
     } catch (err) {
       toast.error("Something Went Wrong");

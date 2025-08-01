@@ -31,7 +31,7 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Select Your Travel Date</CardTitle>
         </CardHeader>
@@ -41,7 +41,7 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
             selected={date}
             onSelect={handleDateSelect}
             disabled={isDateDisabled}
-            className="rounded-md border"
+            className="rounded-md border w-1/2"
           />
         </CardContent>
       </Card>

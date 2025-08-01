@@ -138,7 +138,7 @@ export default function AuthForms() {
         toast.success("You have been logged in successfully.", {
           description: "Welcome back!",
         });
-        console.log("Login successful:", data);
+        // console.log("Login successful:", data);
         navigate("/");
       } else {
         toast.error(data.message || "Invalid credentials. Please try again.", {
@@ -149,7 +149,7 @@ export default function AuthForms() {
       toast.error("Something went wrong. Please try again.", {
         description: "Login Error",
       });
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -230,6 +230,10 @@ export default function AuthForms() {
       window.location.href = `${
         import.meta.env.VITE_API_URL
       }/api/v1/auth/google`;
+
+      toast.success("You have been logged in successfully.", {
+        description: "Welcome!",
+      });
     } catch (error) {
       toast.error("Failed to initiate Google login. Please try again.", {
         description: "Google Login Error",

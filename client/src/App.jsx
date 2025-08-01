@@ -8,6 +8,10 @@ import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import HeroGeometric from "./components/homePage/HeroGeometric";
 import Layout from "./components/Layout";
+import { TestimonialCarousel } from "./components/homePage/Testimonials";
+import CardStack from "./components/homePage/CardStack";
+import OurServices from "./components/homePage/OurServices";
+import Faq from "./components/homePage/Faqs";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -45,6 +49,9 @@ function App() {
             element={
               <Layout>
                 <HeroGeometric />
+                <OurServices />
+                <TestimonialCarousel />
+                <Faq />
               </Layout>
             }
           />
@@ -83,7 +90,7 @@ function App() {
                 <Layout>
                   <AdminDashboard />
                 </Layout>
-                }
+              }
             />
           </Route>
 

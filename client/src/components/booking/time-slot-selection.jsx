@@ -57,7 +57,7 @@ export function TimeSlotSelection({
   if (loading) {
     return (
       <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black-600 mx-auto"></div>
         <p className="mt-2 text-gray-600">Loading available time slots...</p>
       </div>
     );
@@ -78,7 +78,7 @@ export function TimeSlotSelection({
             key={slot.id}
             className={`cursor-pointer transition-all hover:shadow-md ${
               selectedTimeSlot === slot.id
-                ? "ring-2 ring-blue-500 bg-blue-50"
+                ? "ring-2 ring-black-500 bg-blue-50"
                 : "hover:bg-gray-50"
             } ${
               slot.availableSeats === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -97,7 +97,7 @@ export function TimeSlotSelection({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold text-blue-600 mb-2">
+              <p className="text-2xl font-semibold text-black-600 mb-2">
                 {slot.time}
               </p>
               <div className="flex items-center gap-2">

@@ -1,4 +1,7 @@
 import { motion } from "framer-motion";
+import { BookUser, Bus, BusFrontIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 function ElegantShape({
   className,
@@ -47,9 +50,9 @@ function ElegantShape({
 }
 
 export default function HeroGeometric({
-  badge = "Kokonut UI",
-  title1 = "Elevate Your",
-  title2 = "Digital Vision",
+  badge = "Transporation Authority LLC",
+  title1 = "Comfortable Travel",
+  title2 = "Book Fast",
 }) {
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -112,7 +115,7 @@ export default function HeroGeometric({
       </div>
 
       <div className="relative z-10 container mx-auto px-4 md:px-6">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className=" mx-auto text-center">
           <motion.div
             custom={0}
             variants={fadeUpVariants}
@@ -120,12 +123,7 @@ export default function HeroGeometric({
             animate="visible"
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-200 mb-8 md:mb-12"
           >
-            <img
-              src="https://kokonutui.com/logo.svg"
-              alt="Kokonut UI"
-              width={20}
-              height={20}
-            />
+            <Bus className="w-6 h-6 text-gray-600" />
             <span className="text-sm text-gray-600 tracking-wide">{badge}</span>
           </motion.div>
 
@@ -135,7 +133,7 @@ export default function HeroGeometric({
             initial="hidden"
             animate="visible"
           >
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+            <h2 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-gray-900 to-gray-700">
                 {title1}
               </span>
@@ -143,7 +141,7 @@ export default function HeroGeometric({
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-gray-900 to-rose-600 font-[Pacifico,cursive]">
                 {title2}
               </span>
-            </h1>
+            </h2>
           </motion.div>
 
           <motion.div
@@ -153,9 +151,15 @@ export default function HeroGeometric({
             animate="visible"
           >
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
-              Crafting exceptional digital experiences through innovative design
-              and cutting-edge technology.
+              Quick and secure online bookings with flexible scheduling. Plan
+              your ride, your way.
             </p>
+            <Button
+              variant="default"
+              className="h-11 sm:inline-flex w-1/4 text-1xl bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              <Link to="/booking">Book Now</Link>
+            </Button>
           </motion.div>
         </div>
       </div>
