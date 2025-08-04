@@ -179,12 +179,12 @@ export default function AuthForms() {
           credentials: "include",
         }
       );
-      console.log("Sending data:", {
-        name: formData.register.username,
-        email: formData.register.email,
-        password: formData.register.password,
-        role: "user",
-      });
+      // console.log("Sending data:", {
+      //   name: formData.register.username,
+      //   email: formData.register.email,
+      //   password: formData.register.password,
+      //   role: "user",
+      // });
 
       const data = await response.json();
 
@@ -203,6 +203,9 @@ export default function AuthForms() {
             terms: false,
           },
         }));
+
+        navigate("/login");
+
         // You might want to switch to login tab here
       } else {
         toast.error(

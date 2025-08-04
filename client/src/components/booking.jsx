@@ -134,31 +134,6 @@ export default function BookingPage() {
           />
         )}
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t mt-16">
-        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-gray-600">
-          <p className="mb-2">
-            🚌 Express Bus Service - Your Comfort, Our Priority
-          </p>
-          <p className="text-sm">
-            Need help? Contact us at{" "}
-            <a
-              href="mailto:support@expressbus.com"
-              className="text-blue-600 hover:underline"
-            >
-              support@expressbus.com
-            </a>{" "}
-            or call{" "}
-            <a
-              href="tel:+15551234567"
-              className="text-blue-600 hover:underline"
-            >
-              +1 (555) 123-4567
-            </a>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default function ModernHeader() {
         });
         if (!res.ok) throw new Error("Not authenticated");
         const data = await res.json();
-
+        // console.log(data);
         setUser(data);
         setCheckUser(data.role);
         setisLogIn(true);
@@ -192,7 +192,9 @@ export default function ModernHeader() {
                 </DropdownMenu>
               </>
             ) : (
-              <Button variant="default">Login</Button>
+              <Button variant="default">
+                <Link to="/login">Login</Link>
+              </Button>
             )}
           </div>
         </div>

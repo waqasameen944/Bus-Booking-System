@@ -56,9 +56,13 @@ userSchema.methods.matchPassword = async function (password) {
 
 // Create JWT Token
 userSchema.methods.createJWT = function () {
-  return JWT.sign({ userId: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
-  });
+  return JWT.sign(
+    { userId: this._id, email: this.email, role: this.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_LIFETIME,
+    }
+  );
 };
 
 const User = mongoose.model("User", userSchema);
