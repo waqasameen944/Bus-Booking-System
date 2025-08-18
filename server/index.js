@@ -51,7 +51,7 @@ app.use(cookieParser());
 
 //routes
 app.use("/api/auth", authRoutes);
-app.use("/api/v1/auth", googleAuth);
+// app.use("/api/v1/auth", googleAuth);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);

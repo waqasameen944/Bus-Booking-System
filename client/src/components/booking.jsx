@@ -69,17 +69,17 @@ export default function BookingPage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-purple-50 font-sans">
       {/* Header */}
 
-      <div className="max-w-4xl mx-auto px-4 pt-24 text-center">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
-          🚌 Express Bus Booking
+      <div className="max-w-4xl mx-auto px-4 pt-10 md:pt-24 text-center">
+        <h1 className="text-2xl md:text-4xl font-bold md:font-extrabold text-gray-900 mb-2 tracking-tight">
+          🚌 Express Van Booking
         </h1>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 text-sm  md:text-lg">
           Book your comfortable journey with us
         </p>
       </div>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 py-10   rounded-xl mt-8">
+      <main className="max-w-3xl mx-auto px-4 py-4 md:py-10   rounded-xl mt-8">
         {/* Step Header + Progress */}
         <div className="text-center mb-8">
           <h2 className="text-lg font-semibold text-gray-800">

@@ -90,7 +90,7 @@ function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
       }
 
       const bookingResult = await bookingResponse.json();
-      toast.success("Booking created successfully");
+      // toast.success("Booking created successfully");
 
       // Create payment intent
       const paymentResponse = await fetch(
@@ -288,8 +288,9 @@ function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
                     <CardElement options={cardElementOptions} />
                   </div>
 
-                  <div className="flex justify-between pt-4">
+                  <div className="flex flex-col-reverse md:flex-row gap-2 justify-between pt-4">
                     <Button
+                      className={"cursor-pointer"}
                       type="button"
                       variant="outline"
                       onClick={onBack}
@@ -298,9 +299,9 @@ function CheckoutForm({ bookingData, onPaymentSuccess, onBack }) {
                       Back to Details
                     </Button>
                     <Button
+                      className={"cursor-pointer min-w-[120px]"}
                       type="submit"
                       disabled={!stripe || processing || !clientSecret}
-                      className="min-w-[120px]"
                     >
                       {processing ? (
                         <div className="flex items-center gap-2">

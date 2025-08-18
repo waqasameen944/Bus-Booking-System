@@ -259,15 +259,6 @@ export default function AuthForms() {
         </div>
 
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login" className="text-sm font-medium">
-              Sign In
-            </TabsTrigger>
-            <TabsTrigger value="register" className="text-sm font-medium">
-              Sign Up
-            </TabsTrigger>
-          </TabsList>
-
           <TabsContent value="login">
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
               <CardHeader className="space-y-1 pb-4">
@@ -280,28 +271,6 @@ export default function AuthForms() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <form onSubmit={handleLogin} className="space-y-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-10 bg-transparent"
-                    onClick={handleGoogleLogin}
-                    disabled={isLoading}
-                  >
-                    <Mail className="mr-2 h-4 w-4" />
-                    {isLoading ? "Loading..." : "Continue with Google"}
-                  </Button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <Separator />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">
-                        Or continue with email
-                      </span>
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
                     <Label
                       htmlFor="login-email"
@@ -353,7 +322,7 @@ export default function AuthForms() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
+                        className="cursor-pointer absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
                       >
                         {showPassword ? <EyeOff /> : <Eye />}
                       </button>
@@ -364,261 +333,15 @@ export default function AuthForms() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="remember"
-                        className="h-4 w-4 rounded border-gray-300"
-                        checked={formData.login.remember}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "login",
-                            "remember",
-                            e.target.checked
-                          )
-                        }
-                      />
-                      <Label
-                        htmlFor="remember"
-                        className="text-sm text-gray-600"
-                      >
-                        Remember me
-                      </Label>
-                    </div>
-                    <button
-                      type="button"
-                      className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      Forgot password?
-                    </button>
+                    <div className="flex items-center space-x-2"></div>
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    className="cursor-pointer w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     disabled={isLoading}
                   >
                     {isLoading ? "Signing In..." : "Sign In"}
-                  </Button>
-                </form>
-              </CardContent>
-              <CardFooter></CardFooter>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="register">
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-              <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-2xl font-semibold text-center">
-                  Create Account
-                </CardTitle>
-                <CardDescription className="text-center text-gray-600">
-                  Enter your information to create your account
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-10 bg-transparent"
-                    onClick={handleGoogleLogin}
-                    disabled={isLoading}
-                  >
-                    <Mail className="mr-2 h-4 w-4" />
-                    {isLoading ? "Loading..." : "Continue with Google"}
-                  </Button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <Separator />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">
-                        Or continue with email
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium">
-                      Username
-                    </Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="username"
-                        placeholder="johndoe"
-                        className={`pl-10 h-11 ${
-                          errors.username ? "border-red-500" : ""
-                        }`}
-                        value={formData.register.username}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "register",
-                            "username",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                    {errors.username && (
-                      <p className="text-sm text-red-500">{errors.username}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="register-email"
-                      className="text-sm font-medium"
-                    >
-                      Email Address
-                    </Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="john@example.com"
-                        className={`pl-10 h-11 ${
-                          errors.email ? "border-red-500" : ""
-                        }`}
-                        value={formData.register.email}
-                        onChange={(e) =>
-                          handleInputChange("register", "email", e.target.value)
-                        }
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="text-sm text-red-500">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="register-password"
-                      className="text-sm font-medium"
-                    >
-                      Password
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Create a password"
-                        className={`pl-10 pr-10 h-11 ${
-                          errors.password ? "border-red-500" : ""
-                        }`}
-                        value={formData.register.password}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "register",
-                            "password",
-                            e.target.value
-                          )
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? <EyeOff /> : <Eye />}
-                      </button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="confirm-password"
-                      className="text-sm font-medium"
-                    >
-                      Confirm Password
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="confirm-password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm your password"
-                        className={`pl-10 pr-10 h-11 ${
-                          errors.confirmPassword ? "border-red-500" : ""
-                        }`}
-                        value={formData.register.confirmPassword}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "register",
-                            "confirmPassword",
-                            e.target.value
-                          )
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
-                      >
-                        {showConfirmPassword ? <EyeOff /> : <Eye />}
-                      </button>
-                    </div>
-                    {errors.confirmPassword && (
-                      <p className="text-sm text-red-500">
-                        {errors.confirmPassword}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="terms"
-                        className={`h-4 w-4 rounded border-gray-300 ${
-                          errors.terms ? "border-red-500" : ""
-                        }`}
-                        checked={formData.register.terms}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "register",
-                            "terms",
-                            e.target.checked
-                          )
-                        }
-                      />
-                      <Label htmlFor="terms" className="text-sm text-gray-600">
-                        I agree to the{" "}
-                        <button
-                          type="button"
-                          className="text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          Terms of Service
-                        </button>{" "}
-                        and{" "}
-                        <button
-                          type="button"
-                          className="text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          Privacy Policy
-                        </button>
-                      </Label>
-                    </div>
-                    {errors.terms && (
-                      <p className="text-sm text-red-500">{errors.terms}</p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
               </CardContent>

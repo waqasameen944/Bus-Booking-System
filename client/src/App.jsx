@@ -49,13 +49,17 @@ function App() {
             element={
               <Layout>
                 <HeroGeometric />
-                <OurServices />
-                <TestimonialCarousel />
-                <Faq />
               </Layout>
             }
           />
-
+          <Route
+            path="/booking"
+            element={
+              <Layout>
+                <BookingPage />
+              </Layout>
+            }
+          />
           {/* Protected: User or Admin */}
           <Route
             element={
@@ -67,14 +71,6 @@ function App() {
               element={
                 <Layout>
                   <ProfilePage />{" "}
-                </Layout>
-              }
-            />
-            <Route
-              path="/booking"
-              element={
-                <Layout>
-                  <BookingPage />
                 </Layout>
               }
             />

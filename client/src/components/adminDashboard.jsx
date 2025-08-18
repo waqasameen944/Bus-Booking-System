@@ -35,33 +35,6 @@ export default function AdminDashboard() {
                 Last updated: {lastUpdated.toLocaleTimeString()}
               </p>
             </div>
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={refreshData}
-                disabled={loading}
-                className="flex items-center gap-2 bg-transparent"
-              >
-                <RefreshCw
-                  className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
-                />
-                Refresh
-              </Button>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 bg-transparent"
-              >
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 bg-transparent"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Button>
-            </div>
           </div>
         </div>
       </div>

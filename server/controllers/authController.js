@@ -5,7 +5,7 @@ import User from "../models/User.js";
 //register controller
 export const register = async (req, res, next) => {
   try {
-    console.log("Received body:", req.body);
+     
     const { name, email, password, role = "user" } = req.body;
 
     // check if user already exists
@@ -102,7 +102,7 @@ export const getUserProfile = async (req, res, next) => {
       user,
     });
 
-    console.log(user);
+     
   } catch (error) {
     next(error);
   }

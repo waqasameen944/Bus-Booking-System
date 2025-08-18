@@ -120,11 +120,18 @@ export function UserDetailsForm({
               )}
             </div>
 
-            <div className="flex justify-between pt-4">
-              <Button type="button" variant="outline" onClick={onBack}>
+            <div className="flex flex-col-reverse md:flex-row gap-2 justify-between pt-4">
+              <Button
+                className={"cursor-pointer"}
+                type="button"
+                variant="outline"
+                onClick={onBack}
+              >
                 Back to Time Selection
               </Button>
-              <Button type="submit">Continue to Payment</Button>
+              <Button className={"cursor-pointer"} type="submit">
+                Continue to Payment
+              </Button>
             </div>
           </form>
         </CardContent>

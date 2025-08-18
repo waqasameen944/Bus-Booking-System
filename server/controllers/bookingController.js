@@ -9,12 +9,11 @@ dotenv.config();
 const router = express.Router();
 
 // Config values from .env
-const BASE_PRICE = parseFloat(process.env.BUS_SEAT_PRICE || 25);;
-if (!BASE_PRICE) console.log("Please set BASE_PRICE in .env");
+const BASE_PRICE = parseFloat(process.env.BUS_SEAT_PRICE || 25);
+
 const SERVICE_FEE = parseFloat(process.env.SERVICE_FEE || 2);
-if (!SERVICE_FEE) console.log("Please set SERVICE_FEE in .env");
+
 const TOTAL_SEATS = parseInt(process.env.TOTAL_SEATS_AVAILABLE || 15);
-if (!TOTAL_SEATS) console.log("Please set TOTAL_SEATS in .env");
 
 // Helper: validate email
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -160,10 +159,9 @@ export const createBooking = async (req, res, next) => {
         bookedSeats: [],
         price: BASE_PRICE,
       });
-      // console.log(schedule);
+
       await schedule.save();
     } else {
-      console.log("Existing schedule price:", schedule.price);
     }
 
     // Check availability

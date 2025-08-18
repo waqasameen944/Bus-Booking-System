@@ -16,8 +16,8 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-muted py-8 md:py-12 w-full">
-      <div className="container  mx-auto flex flex-row items-center justify-between gap-10 text-sm px-4 md:px-6 text-center">
+    <footer className="bg-muted py-4 md:py-4 w-full">
+      <div className="container  mx-auto flex flex-col md:flex-row items-center justify-between gap-5 text-sm px-4 md:px-6 text-center">
         {/* Logo and Copyright */}
         <div className="flex flex-row gap-2  items-center justify-center space-y-4">
           <Copyright className="h-4 w-4 m-0" />

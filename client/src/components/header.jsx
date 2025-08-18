@@ -142,7 +142,7 @@ export default function ModernHeader() {
                         </Avatar>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        <span className="font-semibold text-sm font-medium capitalize">
+                        <span className="font-semibold text-sm md:font-medium capitalize">
                           {user.name}
                         </span>{" "}
                         <br />
@@ -150,20 +150,9 @@ export default function ModernHeader() {
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <UserCircle className="mr-2 h-4 w-4" />
-                      <span>
-                        <Link
-                          to="/profile"
-                          className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                        >
-                          My Profile
-                        </Link>
-                      </span>
-                    </DropdownMenuItem>
+
                     {checkUser === "admin" && (
                       <>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem>
                           <LayoutDashboardIcon className="mr-2 h-4 w-4" />
                           <span>

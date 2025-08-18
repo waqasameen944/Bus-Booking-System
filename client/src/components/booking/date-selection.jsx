@@ -41,7 +41,7 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
             selected={date}
             onSelect={handleDateSelect}
             disabled={isDateDisabled}
-            className="rounded-md border w-1/2"
+            className="rounded-md border w-full md:w-1/2"
           />
         </CardContent>
       </Card>
@@ -59,7 +59,7 @@ export function DateSelection({ selectedDate, onDateSelect, onNext }) {
               })}
             </span>
           </p>
-          <Button onClick={onNext} size="lg">
+          <Button className="cursor-pointer" onClick={onNext} size="lg">
             Continue to Time Selection
           </Button>
         </div>

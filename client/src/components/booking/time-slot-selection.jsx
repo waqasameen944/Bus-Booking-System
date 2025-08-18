@@ -113,11 +113,12 @@ export function TimeSlotSelection({
         ))}
       </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+      <div className="flex flex-col-reverse md:flex-row gap-2 justify-between">
+        <Button className={"cursor-pointer"} variant="outline" onClick={onBack}>
           Back to Date Selection
         </Button>
         <Button
+          className={"cursor-pointer"}
           onClick={onNext}
           disabled={
             !selectedTimeSlot ||

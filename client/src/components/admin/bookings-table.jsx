@@ -114,9 +114,9 @@ export function BookingsTable() {
       setTotalPages(data.pagination?.totalPages || 1);
 
       // Optional debug log
-      console.log("Fetched bookings:", data.bookings);
+      // console.log("Fetched bookings:", data.bookings);
     } catch (error) {
-      console.error("Fetch error:", error);
+      // console.error("Fetch error:", error);
       toast.error("An error occurred while fetching bookings.");
     } finally {
       setLoading(false);
@@ -363,7 +363,8 @@ export function BookingsTable() {
                 <p>No bookings found matching your criteria</p>
               </div>
             )}
-            <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3 sm:gap-4 flex-wrap">
+              {/* Rows per page selector */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-700">Rows per page:</span>
                 <Select
@@ -381,24 +382,32 @@ export function BookingsTable() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Pagination buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <Button
                   variant="outline"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
+                  className="px-3 py-1 text-sm sm:px-4 sm:py-2"
                 >
                   Previous
                 </Button>
+
                 {renderPageNumbers()}
+
                 <Button
                   variant="outline"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
+                  className="px-3 py-1 text-sm sm:px-4 sm:py-2"
                 >
                   Next
                 </Button>
               </div>
-              <div className="text-sm text-gray-700">
+
+              {/* Page info */}
+              <div className="text-xs sm:text-sm text-gray-700">
                 Page {currentPage} of {totalPages}
               </div>
             </div>

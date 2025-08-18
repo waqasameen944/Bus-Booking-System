@@ -40,7 +40,7 @@ export function DashboardStats() {
         }
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         if (isMounted) {
           if (data.success) {
             setStats(data.statistics); // only set the raw stats object
@@ -48,7 +48,7 @@ export function DashboardStats() {
           setLoading(false);
         }
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         setLoading(false);
       }
     };
